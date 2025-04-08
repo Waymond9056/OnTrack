@@ -7,20 +7,24 @@ class Model():
 
         load_dotenv()
         gpt_key = os.getenv("CHAT_GPT_KEY")
-        print(gpt_key)
 
         self.client = OpenAI(api_key=gpt_key)
-        self.previous_id = None
+        self.history = []
 
     def get_response(self, input):
 
         self.history.append({"role": "user", "content": input})
-        response = self.client.completions.create(
+        response = self.client.chat.completions.create(
             model = "gpt-4o",
-            input = input,
-            previous_response_id = self.previous_id
+            messages = self.history,
+            # previous_response_id = self.previous_id
         )
 
-        self.previous_id = response.id
+        return_text = response.choices[0].message.content
 
-        return response.output_text
+        self.history.append({"role": "assistant", "content": return_text})
+
+        return return_text
+    
+model = Model()
+

@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+import fitz
 
 class Model():
     def __init__(self):
@@ -28,5 +29,13 @@ class Model():
     
 model = Model()
 
-def request():
-    return model.get_response("tell me about yourself")
+def parse_suggestions(file):
+    # Read the PDF from the file stream
+    pdf_data = file.read()
+    doc = fitz.open(stream=pdf_data, filetype="pdf")
+    text = ""
+    for page in doc:
+        text += page.get_text()
+
+    return model.get_response(text)
+

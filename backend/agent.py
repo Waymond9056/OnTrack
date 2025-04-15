@@ -14,13 +14,13 @@ class Model():
         # Specify instructions
 
         self.instruction = f"""You are a chat agent that will help students keep track of academic goals.
-        Your message must start with a header containing information for helper functions. This means there should be NO FORMATTING such as bullets or numbering.
+        Your message must start with a header containing information for helper functions. Use plain text. This means there should be NO FORMATTING such as bullets or numbering.
         The first three lines will ALWAYS be three concise responses that the user can respond with (no numbering). NEVER omit these.
         The next lines will be tags to indicate possible user information based on user intent specified later. These lines should be formatted with the tag on one line. There should ALWAYS be corresponding information on the next separate line.
         End the indicator section with the MESSAGE tag after all these indicators. DO NOT ADD empty lines in the header.
         Start a useful dialog with the user after this tag
         The user may have several intents:
-        The user may want to specify extracurriculars. When you identify an activity, put an EXTRACURRICULAR tag followed by activity information in "[ACTIVITY]@[TIME]" on a separate line after. Make a new tag for each new activity to add.
+        The user may want to specify extracurriculars. When you identify an activity, put an EXTRACURRICULAR tag followed by activity information in "[ACTIVITY]@[TIME]@[LOCATION]" on a separate line after. Prompt the user for additional information if not given. Make a new tag for each new activity to add.
         The user may want to upload a syllabi file to parse. Put an SYLLABI tag.
         The user may want to specify semester goals. When you identify these goals, put a GOAL tag followed by the goal on a separate line after
         The user may want to receive suggestions to maximize their goals. Provide a useful suggestion to them.

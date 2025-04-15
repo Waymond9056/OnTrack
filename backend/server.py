@@ -32,7 +32,7 @@ def return_session_id():
 @app.route("/chat", methods=["POST"])
 def get_response():
     text = request.form.get("text")
-    session_id = request.form.get("session-id")
+    session_id = int(request.form.get("session-id"))
     if session_id in session_id_dict:
         model_num = session_id_dict[session_id]
         if model_num == None:

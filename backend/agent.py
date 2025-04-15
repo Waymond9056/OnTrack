@@ -54,6 +54,8 @@ class Model():
         status = None
         for i in range(len(lines)):
             line = lines[i]
+            if line == "":
+                continue
             if line == "MESSAGE":
                 ret["message"] = ""
                 for ii in range(i + 1, len(lines)):

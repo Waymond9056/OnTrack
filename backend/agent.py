@@ -44,7 +44,7 @@ class Model():
         self.history.append({"role": "assistant", "content": return_text})
 
         return return_text
-    
+'''
 model = Model()
 print(model.get_response("Hi"))
 print("------")
@@ -53,4 +53,5 @@ print("------")
 print(model.get_response("I want to set some academic goals"))
 print("------")
 print(model.get_response("I'd like to get an A in discrete math"))
+'''
 

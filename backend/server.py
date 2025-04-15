@@ -1,7 +1,11 @@
 from flask import Flask, request
+from flask_cors import CORS
 from syllabus import parse_suggestions
 from agent import Model
 import random
+
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Handling multiple users
 server_capacity = 5
@@ -10,8 +14,6 @@ next_pos = 0
 session_id_dict = dict()
 session_id_dict[-1] = None
 session_id_storage = [-1] * server_capacity
-
-app = Flask(__name__)
 
 @app.route("/")
 def hello_world():

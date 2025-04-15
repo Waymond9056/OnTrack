@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ProtectedRoute from "./../components/ProtectedRoute";
+import ProtectedRoute from "../../../components/ProtectedRoute";
 
 export default function DashboardPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);

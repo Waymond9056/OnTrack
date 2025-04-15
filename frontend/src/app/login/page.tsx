@@ -26,13 +26,13 @@ export default function LoginPage() {
     <section className="px-6 py-20 bg-white text-center">
       <h1 className="text-4xl font-bold text-gray-800 mb-6">Login</h1>
       <p className="text-gray-600 mb-4">Please log in to continue.</p>
-      <div className="max-w-md mx-auto bg-gray-100 p-6 rounded-lg shadow">
+      <div className="text-gray-600 max-w-md mx-auto bg-gray-100 p-6 rounded-lg shadow">
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 mb-4 rounded border border-gray-300"
+          className= "w-full p-3 mb-4 rounded border border-gray-300"
         />
         <input
           type="password"

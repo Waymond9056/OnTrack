@@ -2,6 +2,7 @@ from flask import Flask, request
 from syllabus import parse_suggestions
 from agent import Model
 import random
+import fitz
 
 # Handling multiple users
 server_capacity = 5
@@ -32,7 +33,7 @@ def return_session_id():
 @app.route("/chat", methods=["POST"])
 def get_response():
     text = request.form.get("text")
-    session_id = request.form.get("session-id")
+    session_id = int(request.form.get("session-id"))
     if session_id in session_id_dict:
         model_num = session_id_dict[session_id]
         if model_num == None:
@@ -42,18 +43,8 @@ def get_response():
     else:
         return "Session not found..."
 
-@app.route('/api/upload', methods=['POST'])
-def upload_pdf():
-    if 'file' not in request.files:
-        return {'error': 'No file part'}, 400
-
-    file = request.files['file']
-
-    if file.filename == '':
-        return {'error': 'No selected file'}, 400
-
-    if file:
-        return parse_suggestions(file)
+# @app.route('/api/upload', methods=['POST'])
+# def upload_pdf():
 
 if __name__ == '__main__':
     app.run(debug=True)

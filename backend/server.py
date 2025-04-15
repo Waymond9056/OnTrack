@@ -1,8 +1,8 @@
 from flask import Flask, request
-from syllabus import parse_suggestions
 from agent import Model
 import random
 import fitz
+from database import get_user
 
 # Handling multiple users
 server_capacity = 5
@@ -45,6 +45,10 @@ def get_response():
 
 # @app.route('/api/upload', methods=['POST'])
 # def upload_pdf():
+
+@app.route("/getuser")
+def user():
+    return get_user()
 
 if __name__ == '__main__':
     app.run(debug=True)

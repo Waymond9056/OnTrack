@@ -45,10 +45,9 @@ export default function HomePage() {
               Amazing Features
             </h1>
             <p className="text-gray-600 mb-6">
-              Our product offers a wide range of features designed to improve
-              your workflow, enhance collaboration, and simplify your tasks.
-              Whether you're a solo developer or a large team, you'll love the
-              flexibility and power we provide.
+              {
+                "Our product offers a wide range of features designed to improve your workflow, enhance collaboration, and simplify your tasks. Whether you're a solo developer or a large team, you'll love the flexibility and power we provide."
+              }
             </p>
             <ul className="list-disc pl-5 text-gray-700 space-y-2">
               <li>Fast and intuitive interface</li>

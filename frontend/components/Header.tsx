@@ -20,7 +20,7 @@ export default function Header() {
         <Link href="/" className="text-blue-600 font-semibold">
           Logo
         </Link>
-        <Link href="/features" className="text-gray-700 hover:text-blue-600">
+        <Link href="#features" className="text-gray-700 hover:text-blue-600">
           Features
         </Link>
       </div>

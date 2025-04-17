@@ -1,34 +1,38 @@
 export default function HomePage() {
   return (
     <div>
-      {/* Hero */}
-      <section className="bg-blue-100 text-center py-20">
-        <h1 className="text-3xl font-bold text-blue-800">OnTrack</h1>
-        <p className="text-blue-700 mt-4">
-          Your personalized AI education assistant
-        </p>
-      </section>
 
-      {/* Intro */}
-      <section className="bg-white text-center py-20">
-        <p className="text-black mt-4 px-40">
-          OnTrack is a personalized AI assistant that helps students stay on top
-          of their classwork, semester goals, grades, and other commitments.
-          This web-based assistant allows the user to input information related
-          to each of these commitments across all aspects that the user wishes
-          to succeed in, whether that is frequent updates to the user’s grades,
-          course assignments and syllabi, sports schedules, or social events.
-          From there, it is able to generate personalized suggestions for which
-          commitments the user should prioritize to best suit their needs, and
-          adapts to any updates the user may provide throughout this period of
-          self-improvement. Additionally, location-based information of where
-          each commitment takes place can be inputted for OnTrack, in which the
-          application can generate optimal transportation paths to efficiently
-          navigate between areas of commitments. These suggestions are primarily
-          communicated and received through OnTrack’s adaptive chatbot, which
-          understands the users needs and can provide advice at the user’s
-          desire.
-        </p>
+      {/* Hero */}
+      <section className="bg-white py-60 px-4">
+        <div className="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center md:space-x-12">
+    
+          {/* text stuff */}
+          <div className="w-full md:w-1/2 text-left mt-8 md:mt-0">
+            <h1 className="text-6xl font-bold text-black">
+              OnTrack
+            </h1>
+            <p className="text-xl text-gray-500 mt-2">
+              Your personalized AI education assistant.
+            </p>
+            <p className="text-black mt-8 max-w-lg">
+              OnTrack is a personalized AI assistant designed to help students manage their classwork, goals, 
+              grades, and other commitments. Users can input details like grades, assignments, schedules, and 
+              events, and OnTrack provides personalized suggestions to prioritize tasks, adapting as new updates 
+              are shared. It also uses location-based information to suggest efficient transportation routes. With 
+              its adaptive chatbot, OnTrack offers advice and support tailored to the user’s needs.
+            </p>
+          </div>
+
+          {/* image on the right */}
+          <div className="w-full md:w-1/2 flex justify-center md:justify-end">
+            <img
+              src="/home/temp_img.png" // this image is temporary
+              alt="Home Image"
+              className="w-full max-w-md rounded-xl shadow-lg"
+            />
+          </div>
+
+        </div>
       </section>
 
 

@@ -14,13 +14,13 @@ export default function Header() {
   };
 
   return (
-    <header className="flex justify-between items-center p-4 bg-white shadow-md">
+    <header className="flex justify-between items-center p-4 bg-white border-b border-gray-200">
       {/* Left side: logo + nav */}
       <div className="flex space-x-4">
         <Link href="/" className="text-blue-600 font-semibold">
           Logo
         </Link>
-        <Link href="/features" className="text-gray-700 hover:text-blue-600">
+        <Link href="#features" className="text-gray-700 hover:text-blue-600">
           Features
         </Link>
       </div>

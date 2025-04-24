@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const { isLoggedIn, logout } = useLogin();
+  const { isLoggedIn, login, logout } = useLogin(); // Access login and logout
   const router = useRouter();
 
   const handleLogout = () => {
-    logout();
-    router.push("/");
+    logout(); // Call logout function
+    router.push("/"); // Redirect to homepage after logout
   };
 
   return (
@@ -27,22 +27,21 @@ export default function Header() {
 
       {/* Right side: auth buttons */}
       <div className="flex space-x-4">
-        {isLoggedIn && (
-          <Link
-            href="/dashboard"
-            className="text-gray-700 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-          >
-            Dashboard
-          </Link>
-        )}
-
         {isLoggedIn ? (
-          <button
-            onClick={handleLogout}
-            className="text-white bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Logout
-          </button>
+          <>
+            <Link
+              href="/dashboard"
+              className="text-gray-700 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+            >
+              Dashboard
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="text-white bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Logout
+            </button>
+          </>
         ) : (
           <>
             <Link

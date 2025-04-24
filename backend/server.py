@@ -1,6 +1,5 @@
 from flask import Flask, request
 from flask_cors import CORS
-from syllabus import parse_suggestions
 from agent import Model
 import random
 import fitz

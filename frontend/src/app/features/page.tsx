@@ -1,4 +1,4 @@
-export default function FeaturesPage() {
+export default function FeaturesPage() { /* keeping this here in case we need it */
   return (
     <div>
       <section className="px-6 py-20 bg-white">

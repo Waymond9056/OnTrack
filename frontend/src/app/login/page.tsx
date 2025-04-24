@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
+import { useLogin } from "@/app/context/LoginContext"; // Import useLogin
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useLogin(); // Access login function from LoginContext
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -18,6 +20,7 @@ export default function LoginPage() {
     if (error) {
       alert("Login failed: " + error.message);
     } else {
+      login(); // Update isLoggedIn state in LoginContext
       router.push("/dashboard");
     }
   };
@@ -32,7 +35,7 @@ export default function LoginPage() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className= "w-full p-3 mb-4 rounded border border-gray-300"
+          className="w-full p-3 mb-4 rounded border border-gray-300"
         />
         <input
           type="password"

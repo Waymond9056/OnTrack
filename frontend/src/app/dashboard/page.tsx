@@ -1,116 +1,130 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { LoginProvider } from "../context/LoginContext";
 import ProtectedRoute from "../../../components/ProtectedRoute";
 
 export default function DashboardPage() {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [messages, setMessages] = useState<string[]>([]);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<string[]>([]);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
+  // Fetch session ID on load
+  useEffect(() => {
+    fetch("http://127.0.0.1:5000/get-session-id")
+      .then((res) => res.text())
+      .then(setSessionId)
+      .catch(console.error);
+  }, []);
+
+  const handleSend = async () => {
+    if (!input || !sessionId || isLoading) return;
+
+    setIsLoading(true);
+    setMessages((prev) => [...prev, `You: ${input}`]);
+
+    const formData = new FormData();
+    formData.append("text", input);
+    formData.append("session-id", sessionId);
+
+    try {
+      const res = await fetch("http://127.0.0.1:5000/chat", {
+        method: "POST",
+        body: formData,
+      });
+      const reply = await res.text();
+      setMessages((prev) => [...prev, `Bot: ${reply}`]);
+      setInput("");
+    } catch (err) {
+      console.error(err);
+      setMessages((prev) => [...prev, `Bot: (error)`]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSend = () => {
-    if (input.trim() !== "") {
-      setMessages((prev) => [...prev, `You: ${input}`, `Bot: Echo - ${input}`]);
-      setInput("");
-    }
+  const handleUpload = async (file: File) => {
+    setFileName(file.name);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("http://127.0.0.1:5000/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    console.log("Parsed syllabus:", data);
+    setMessages((prev) => [...prev, "Bot: Uploaded and parsed syllabus."]);
   };
 
   return (
-    <ProtectedRoute>
-      <div className="flex h-[calc(100vh-72px)]">
-        {" "}
-        {/* adjust height below header */}
-        {/* Left: Upload Syllabus */}
-        <div className="w-1/2 bg-gray-100 flex items-center justify-center">
-          <div className="text-center">
-            {/* Upload Icon */}
-            <div className="flex justify-center mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-16 w-16 text-blue-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v8m0-8l-3.5 3.5M12 12l3.5 3.5M12 4v4"
-                />
-              </svg>
-            </div>
-
-            {/* Text & Input */}
-            <h2 className="text-2xl font-bold mb-2">Upload Your Syllabus</h2>
-            <p className="text-gray-600 mb-4">PDF, DOCX, or TXT formats</p>
+    <LoginProvider>
+      <ProtectedRoute>
+        <div className="flex h-[calc(100vh-72px)]">
+          {/* Upload section */}
+          <div className="w-1/2 bg-gray-100 flex flex-col justify-center items-center p-6">
+            <h2 className="text-2xl font-bold mb-4">Upload Your Syllabus</h2>
             <input
               type="file"
               accept=".pdf,.docx,.txt"
-              onChange={handleFileChange}
-              className="mb-4"
+              onChange={(e) => {
+                if (e.target.files?.[0]) handleUpload(e.target.files[0]);
+              }}
             />
-            {selectedFile && (
-              <p className="text-gray-700">
-                Selected File: {selectedFile.name}
-              </p>
+            {fileName && (
+              <p className="mt-2 text-sm text-gray-600">Uploaded: {fileName}</p>
             )}
           </div>
+
+          {/* Chatbot UI */}
+          <div className="w-1/2 bg-white border-l flex flex-col">
+            <div className="p-4 border-b bg-white shadow-sm">
+              <h2 className="text-2xl font-bold text-gray-800">
+                Chat with Your Syllabus
+              </h2>
+            </div>
+
+            <div className="flex-1 px-4 py-6 overflow-y-auto space-y-4">
+              {messages.map((msg, i) => {
+                const isUser = msg.startsWith("You:");
+                return (
+                  <div
+                    key={i}
+                    className={`max-w-[70%] px-4 py-2 rounded-2xl text-sm whitespace-pre-line ${
+                      isUser
+                        ? "ml-auto bg-blue-600 text-white rounded-br-none"
+                        : "mr-auto bg-gray-200 text-gray-800 rounded-bl-none"
+                    }`}
+                  >
+                    {msg.replace(/^You:\s?|^Bot:\s?/, "")}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="p-4 border-t bg-white flex items-center">
+              <input
+                className="flex-1 p-2 border rounded-full mr-2 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                placeholder="Ask a question..."
+                disabled={isLoading}
+              />
+              <button
+                onClick={handleSend}
+                disabled={isLoading}
+                className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 disabled:bg-gray-400"
+              >
+                {isLoading ? "Sending…" : "Send"}
+              </button>
+            </div>
+          </div>
         </div>
-        {/* Right: Chatbot */}
-        <div className="w-1/2 bg-gray-50 border-l border-gray-300 flex flex-col">
-          <div className="p-6 border-b bg-white shadow-sm">
-            <h2 className="text-2xl font-bold text-gray-800">
-              Chat with your Syllabus
-            </h2>
-          </div>
-
-          {/* Chat Messages */}
-          <div className="flex-1 px-4 py-6 overflow-y-auto space-y-4">
-            {messages.map((msg, idx) => {
-              const isUser = msg.startsWith("You:");
-              const content = msg.replace(/^You:\s?|^Bot:\s?/, "");
-
-              return (
-                <div
-                  key={idx}
-                  className={`max-w-[70%] px-4 py-2 rounded-2xl text-sm whitespace-pre-line ${
-                    isUser
-                      ? "ml-auto bg-blue-600 text-white rounded-br-none"
-                      : "mr-auto bg-gray-200 text-gray-800 rounded-bl-none"
-                  }`}
-                >
-                  {content}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Input Box */}
-          <div className="p-4 border-t bg-white flex items-center">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              placeholder="Type a message..."
-              className="flex-1 p-2 border rounded-full mr-2 outline-none"
-            />
-            <button
-              onClick={handleSend}
-              className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700"
-            >
-              Send
-            </button>
-          </div>
-        </div>
-      </div>
-    </ProtectedRoute>
+      </ProtectedRoute>
+    </LoginProvider>
   );
 }

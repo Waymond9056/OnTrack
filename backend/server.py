@@ -3,8 +3,8 @@ from flask_cors import CORS
 
 from agent import Model
 import random
-import fitz
-from database import get_user
+# import fitz
+from database import database
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes

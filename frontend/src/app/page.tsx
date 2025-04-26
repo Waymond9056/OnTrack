@@ -18,7 +18,7 @@ export default function HomePage() {
               prioritize tasks, adapting as new updates are shared. It also uses
               location-based information to suggest efficient transportation
               routes. With its adaptive chatbot, OnTrack offers advice and
-              support tailored to the user’s needs.
+              support tailored to the user&apos;s needs.
             </p>
           </div>
 
@@ -84,7 +84,7 @@ export default function HomePage() {
             </h2>
             <p className="text-gray-600 mb-6">
               Navigate your data visually with our interactive map icon feature.
-              Whether you're exploring location-based inputs or toggling views,
+              Whether you&apos;re exploring location-based inputs or toggling views,
               the built-in map tools make orientation effortless and
               intuitive—perfect for keeping context without ever breaking focus.
             </p>

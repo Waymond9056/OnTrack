@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const { isLoggedIn, login, logout } = useLogin(); // Access login and logout
+  const { isLoggedIn, logout } = useLogin(); // Access login and logout
   const router = useRouter();
 
   const handleLogout = () => {

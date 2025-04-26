@@ -3,7 +3,7 @@ from flask_cors import CORS
 
 from agent import Model
 import random
-# import fitz
+import fitz
 from database import database
 
 app = Flask(__name__)
@@ -46,12 +46,26 @@ def get_response():
     else:
         return "Session not found..."
 
-# @app.route('/api/upload', methods=['POST'])
-# def upload_pdf():
+@app.route('/api/upload', methods=['POST'])
+def upload_pdf():
+    if 'file' not in request.files:
+        return 'No file part'
+    file = request.files['file']
+    if file.filename == '':
+        return 'No selected file'
+    if file:
+        pdf_data = file.read()
+        doc = fitz.open(stream=pdf_data, filetype="pdf")
+        text = ""
+        for page in doc:
+            text += page.get_text()
+
+        database.set_syllabus("user", text)
+        return "PDF successfully uploaded."
 
 @app.route("/getuser")
 def user():
-    return get_user()
+    return database.get_user()
 
 if __name__ == '__main__':
     app.run(debug=True)

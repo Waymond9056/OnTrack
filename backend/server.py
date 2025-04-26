@@ -51,6 +51,7 @@ def upload_pdf():
     if 'file' not in request.files:
         return 'No file part'
     file = request.files['file']
+    userID = request.form.get("userID")
     if file.filename == '':
         return 'No selected file'
     if file:
@@ -60,7 +61,7 @@ def upload_pdf():
         for page in doc:
             text += page.get_text()
 
-        database.set_syllabus("user", text)
+        database.set_syllabus(userID, text)
         return "PDF successfully uploaded."
 
 @app.route("/getuser")

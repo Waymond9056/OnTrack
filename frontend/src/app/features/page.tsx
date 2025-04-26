@@ -6,18 +6,20 @@ export default function FeaturesPage() { /* keeping this here in case we need it
           {/* Text Section */}
           <div>
             <h1 className="text-4xl font-bold text-gray-800 mb-4">
-              Amazing Features
+              Smart Chatbot Assistant
+
             </h1>
             <p className="text-gray-600 mb-6">
               {
-                "Our product offers a wide range of features designed to improve your workflow, enhance collaboration, and simplify your tasks. Whether you're a solo developer or a large team, you'll love the flexibility and power we provide."
+                "Our intelligent chatbot is designed to provide instant support, streamline your queries, and guide you through tasks with ease. Whether you're uploading a syllabus or seeking quick answers, the chatbot is always ready to assist, keeping your workflow smooth and efficient."
               }
             </p>
             <ul className="list-disc pl-5 text-gray-700 space-y-2">
-              <li>Fast and intuitive interface</li>
-              <li>Seamless team collaboration</li>
-              <li>Customizable to your needs</li>
-              <li>Secure and reliable infrastructure</li>
+              <li>Natural and conversational interface
+              </li>
+              <li>Instant responses tailored to your content</li>
+              <li>Integrates directly with your dashboard</li>
+              <li>Reduces time spent searching or waiting</li>
             </ul>
           </div>
 
@@ -46,17 +48,20 @@ export default function FeaturesPage() { /* keeping this here in case we need it
           {/* Text Section (Right) */}
           <div>
             <h2 className="text-4xl font-bold text-gray-800 mb-4">
-              Smart Integrations
+            Interactive Map Integration
+
             </h2>
             <p className="text-gray-600 mb-6">
-              Easily connect with your favorite tools and services. Our platform
-              supports seamless integrations that enhance productivity and
-              minimize context switching.
+            Navigate your data visually with our interactive map icon feature. Whether you're exploring location-based inputs or toggling views, the built-in map tools make orientation effortless and intuitive—perfect for keeping context without ever breaking focus.
+
+
             </p>
             <ul className="list-disc pl-5 text-gray-700 space-y-2">
-              <li>Integrate with Slack, Notion, GitHub, and more</li>
-              <li>Automate repetitive tasks</li>
-              <li>Build custom workflows</li>
+              <li>Click-to-toggle map icon
+              </li>
+              <li>Instantly view location-based elements</li>
+              <li>Responsive design across devices
+              </li>
             </ul>
           </div>
         </div>

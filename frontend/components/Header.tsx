@@ -18,7 +18,7 @@ export default function Header() {
       {/* Left side: logo + nav */}
       <div className="flex space-x-4">
         <Link href="/" className="text-blue-600 font-semibold">
-          Logo
+          OnTrack
         </Link>
         <Link href="#features" className="text-gray-700 hover:text-blue-600">
           Features

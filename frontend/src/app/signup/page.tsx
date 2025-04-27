@@ -17,6 +17,15 @@ export default function SignupPage() {
     } else {
       alert("Account created! Check your email to verify.");
       router.push("/login");
+
+      const formData = new FormData();
+      formData.append("userID", email)
+      
+      const res = await fetch("http://127.0.0.1:5000/create_user", {
+        method: "POST",
+        body: formData,
+      });
+      console.log(res);
     }
   };
 

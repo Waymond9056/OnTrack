@@ -42,7 +42,8 @@ def get_response():
         if model_num == None:
             return "Session time out..."
         relevant_model = models[model_num]
-        return relevant_model.get_response(text)
+        ret = relevant_model.get_response(text)
+        return ret
     else:
         return "Session not found..."
 

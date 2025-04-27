@@ -5,6 +5,7 @@ from agent import Model
 import random
 import fitz
 from database import database
+from database import create_user
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -64,6 +65,12 @@ def upload_pdf():
 
         database.set_syllabus(userID, text)
         return "PDF successfully uploaded."
+    
+@app.route('/create_user')
+def create_new_user():
+    userID = request.form.get("userID");
+    create_user(userID);
+
     
 @app.route('/clear_data', methods=['POST'])
 def clear_data():

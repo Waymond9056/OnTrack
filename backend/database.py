@@ -53,3 +53,8 @@ class database():
 
     def set_activities(userID, newValue):
         database.set_user_data(userID, 'activities', newValue)
+
+    def clear_user_data(userID):
+        database.set_goals(userID, "NULL")
+        database.set_activities(userID, "NULL")
+        database.set_syllabus(userID, "NULL")

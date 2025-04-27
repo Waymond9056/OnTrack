@@ -64,10 +64,11 @@ def upload_pdf():
 
         database.set_syllabus(userID, text)
         return "PDF successfully uploaded."
-
-@app.route("/getuser")
-def user():
-    return database.get_user()
+    
+@app.route('/clear_data', methods=['POST'])
+def clear_data():
+    userID = request.form.get("userID")
+    database.clear_user_data(userID)
 
 if __name__ == '__main__':
     app.run(debug=True)

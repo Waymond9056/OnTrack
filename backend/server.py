@@ -1,8 +1,10 @@
 from flask import Flask, request
 from flask_cors import CORS
+
 from agent import Model
 import random
 import fitz
+from database import database
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -40,12 +42,33 @@ def get_response():
         if model_num == None:
             return "Session time out..."
         relevant_model = models[model_num]
-        return relevant_model.get_response(text)
+        ret = relevant_model.get_response(text)
+        return ret
     else:
         return "Session not found..."
 
-# @app.route('/api/upload', methods=['POST'])
-# def upload_pdf():
+@app.route('/api/upload', methods=['POST'])
+def upload_pdf():
+    if 'file' not in request.files:
+        return 'No file part'
+    file = request.files['file']
+    userID = request.form.get("userID")
+    if file.filename == '':
+        return 'No selected file'
+    if file:
+        pdf_data = file.read()
+        doc = fitz.open(stream=pdf_data, filetype="pdf")
+        text = ""
+        for page in doc:
+            text += page.get_text()
+
+        database.set_syllabus(userID, text)
+        return "PDF successfully uploaded."
+    
+@app.route('/clear_data', methods=['POST'])
+def clear_data():
+    userID = request.form.get("userID")
+    database.clear_user_data(userID)
 
 if __name__ == '__main__':
     app.run(debug=True)

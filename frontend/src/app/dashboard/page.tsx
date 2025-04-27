@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { LoginProvider } from "../context/LoginContext";
 import ProtectedRoute from "../../../components/ProtectedRoute";
+import { supabase } from "../../../lib/supabase";
 
 export default function DashboardPage() {
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -13,7 +14,8 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
 
-  useEffect(() => {
+  // Fetch session ID on load
+  useEffect(() => { 
     fetch("http://127.0.0.1:5000/get-session-id")
       .then((res) => res.text())
       .then(setSessionId)
@@ -52,6 +54,10 @@ export default function DashboardPage() {
 
     const formData = new FormData();
     formData.append("file", file);
+    const { data: { user }, error } = await supabase.auth.getUser();
+    console.log(error);
+    formData.append("userID", user?.email)
+    
 
     const res = await fetch("http://127.0.0.1:5000/api/upload", {
       method: "POST",

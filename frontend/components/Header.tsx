@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const { isLoggedIn, login, logout } = useLogin(); // Access login and logout
+  const { isLoggedIn, logout } = useLogin(); // Access login and logout
   const router = useRouter();
 
   const handleLogout = () => {
@@ -18,7 +18,7 @@ export default function Header() {
       {/* Left side: logo + nav */}
       <div className="flex space-x-4">
         <Link href="/" className="text-blue-600 font-semibold">
-          Logo
+          OnTrack
         </Link>
         <Link href="#features" className="text-gray-700 hover:text-blue-600">
           Features

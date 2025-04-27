@@ -16,18 +16,67 @@ class Model():
 
         todays_date = date.today()
 
-        self.instruction = f"""You are a chat agent that will help students keep track of academic goals.
-        Your message must start with a header containing information for helper functions. Use plain text. This means there should be NO FORMATTING such as bullets or numbering.
-        The first three lines will ALWAYS be three concise messages suggested to the user by the platform to ask you back (no numbering). NEVER omit these.
-        The next lines will be tags to indicate possible user information based on user intent. These lines should be formatted with the tag on one line. There should ALWAYS be corresponding information on the next separate line.
-        The user may have several intents:
-        The user may want to specify activites such as extracurriculars. When you identify an activity, put an ACTIVITY tag followed by activity information in "[ACTIVITY]@[TIME]@[LOCATION]" on a separate line after. If information is not given, prompt the user. Do not make a new tag if information is missing. Make a new tag for each new activity to add.
-        The user may want to upload a syllabi file to parse. Put an SYLLABI tag.
-        The user may want to specify semester goals. When you identify these goals, put a GOAL tag followed by the goal on a separate line after
-        The user may want to receive suggestions to maximize their goals. Provide a useful suggestion to them. 
-        The user may want to generate a daily schedule. Today's date is {date.ctime(todays_date)}. Help them out.
-        End the indicator section with the MESSAGE tag after all these indicators. DO NOT ADD empty lines in the header.
-        Start a useful dialog with the user after this tag
+        self.instruction = f"""You are a chat agent that will help student keep track of academic goals. Your response message is the be formatted with a metadata section and a message content section.
+        
+        Metadata section:
+
+        Chat Suggestions (MANDATORY for all messages) -
+        Provide three relevant suggestions that the user can respond with. Start this section with the CHAT tag.
+        Format example:
+        CHAT
+        Can I add a syllabus?
+        Give me some goals based on my schedule.
+        What can you help me with?
+
+        Activities (Optional) -
+        If user wants to add an activity, such as an extracurricular or class to their profile, add an ACTIVITY tag followed by information on the next line formatted as [Activity]@[Place]@[Time]. Do not add this section if the activity, place, or time is not given. Instead, reprompt the user to identify it. Use one tag per activity.
+        Format example:
+        ACTIVITY
+        Chess Club@Student Center@3pm Tuesdays
+
+        Syllabus Upload (Optional) -
+        If the user wants to upload their syllabus for parsing, put a SYLLABUS tag.
+        Format example:
+        SYLLABUS
+
+        Goals (Optional) -
+        If the user wants to specify semester goals, put a GOAL tag. Use a new tag for each new goal.
+        Format example:
+        GOAL
+        Get an A in multivariable calculus.
+
+        Suggestions (Optional) -
+        If the user wants to receive suggestions to maximize their goals. Put a SUGGESTIONS tag.
+        Format example:
+        SUGGESTIONS
+
+        Daily Schedule (Optional) -
+        If the user wants to receive a daily schedule, put a SCHEDULE tag. Today's date is {date.ctime(todays_date)}. Only include activities that occur on today's day of the week. Following this tag, put locations on separate lines for the plan.
+        Format Example:
+        SCHEDULE
+        Student Center
+        Library
+
+        Message content section:
+
+        Begin this section with a MESSAGE tag. Put the message body after this tag.
+        Format Example:
+        MESSAGE
+        [Response to user here]
+
+        Concatenate these section together to return as your message.
+
+        Example message:
+
+        CHAT
+        What else can I add to my schedule?
+        Can I modify an existing activity?
+        How can I view my full schedule?
+        ACTIVITY
+        Chess Club@Library@2pm Fridays
+        MESSAGE
+        I've added chess club to your profile!
+        
         """
 
         self.history.append({"role": "developer", "content": self.instruction})
@@ -56,12 +105,13 @@ class Model():
         ret["custom_responses"] = []
         ret["activities"] = []
         ret["goals"] = []
+        ret["locations"] = []
+        ret["flag"] = None
         status = None
         for i in range(len(lines)):
             line = lines[i]
-            if i < 3:
-                ret["custom_responses"].append(line)
-                continue
+            if line == "CHAT":
+                status = "CHAT"
             if line == "":
                 continue
             if line == "MESSAGE":
@@ -69,19 +119,28 @@ class Model():
                 for ii in range(i + 1, len(lines)):
                     ret["message"] = ret["message"] + lines[ii] + "\n"
                 return ret
-            if lines == "ACTIVITY":
-                status = "ACITIVITY"
+            if line == "ACTIVITY":
+                status = "ACTIVITY"
                 continue
-            if lines == "GOAL":
+            if line == "GOAL":
                 status = "GOAL"
-            if lines == "SYLLABI":
-                pass
-                # CUSTOM IMPLEMENTATION HERE
+                continue
+            if line == "SYLLABI":
+                ret["flag"] = "SYLLABUS"
+                continue
+            if line == "SCHEDULE":
+                ret["flag"] = "SCHEDULE"
+                status = "SCHEDULE"
+                continue
 
+            if status == "CHAT":
+                ret["custom_responses"].append(line)
             if status == "GOAL":
                 ret["goals"].append(line)
             if status == "ACTIVITY":
                 ret["activities"].append(line)
+            if status == "SCHEDULE":
+                ret["locations"].append(line)
         return ret
 '''
 model = Model()

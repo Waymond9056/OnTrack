@@ -49,12 +49,22 @@ class database():
         database.set_user_data(userID, 'syllabus', newValue)
 
     def set_goals(userID, newValue):
-        database.set_user_data(userID, 'goals', newValue)
+        database.set_user_data(
+            userID, 
+            'goals', 
+            database.get_activities(userID).append(newValue)
+        )
 
     def set_activities(userID, newValue):
-        database.set_user_data(userID, 'activities', newValue)
+        database.set_user_data(
+            userID, 
+            'activities', 
+            database.get_activities(userID).append(newValue)
+        )
 
     def clear_user_data(userID):
-        database.set_goals(userID, "NULL")
-        database.set_activities(userID, "NULL")
-        database.set_syllabus(userID, "NULL")
+        database.set_goals(userID, "")
+        database.set_activities(userID, "")
+        database.set_syllabus(userID, "")
+
+    

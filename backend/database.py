@@ -19,20 +19,27 @@ class database():
         supabase: Client = create_client(url, key)
         response = (
             supabase.table("Users")
-            .select("id")
+            .select("*")
             .eq('id', userID)
             .execute()
         )
         return response.data
 
     def get_syllabus(userID):
-        return database.get_user_data(userID)['syllabus'];
+        data = database.get_user_data(userID)[0]
+        return data['syllabus'];
+  
 
     def get_goals(userID):
-        return database.get_user_data(userID)['goals'];
+        data = database.get_user_data(userID)[0]
+        return data['goals'];
 
     def get_activities(userID):
-        return database.get_user_data(userID)['activities'];
+        data = database.get_user_data(userID)[0]
+        # print(data['activities'].append("hi"))
+        return data['activities'];
+ 
+        
 
     def set_user_data(userID, column, newValue):
         url: str = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
@@ -49,17 +56,21 @@ class database():
         database.set_user_data(userID, 'syllabus', newValue)
 
     def set_goals(userID, newValue):
+        goals = database.get_activities(userID)
+        goals.append(newValue)
         database.set_user_data(
             userID, 
             'goals', 
-            database.get_activities(userID).append(newValue)
+            goals
         )
 
     def set_activities(userID, newValue):
+        activities = database.get_activities(userID)
+        activities.append(newValue)
         database.set_user_data(
             userID, 
             'activities', 
-            database.get_activities(userID).append(newValue)
+            activities
         )
 
     def clear_user_data(userID):

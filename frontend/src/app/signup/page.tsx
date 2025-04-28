@@ -20,7 +20,7 @@ export default function SignupPage() {
       formData.append("userID", email)
       console.log("Attempting to call")
       
-      const res = await fetch("http://127.0.0.1:5000/create_user", {
+      const res = await fetch("https://mukils.pythonanywhere.com/create_user", {
         method: "POST",
         body: formData,
       });

@@ -120,7 +120,7 @@ export default function DashboardPage() {
       formData.append("userID", user.email);
 
       try {
-        const res = await fetch("http://127.0.0.1:5000/get-session-id", {
+        const res = await fetch("https://mukils.pythonanywhere.com/get-session-id", {
           method: "POST",
           body: formData,
         });
@@ -154,7 +154,7 @@ export default function DashboardPage() {
     formData.append("session-id", sessionId);
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/chat", {
+      const res = await fetch("https://mukils.pythonanywhere.com/chat", {
         method: "POST",
         body: formData,
       });
@@ -194,7 +194,7 @@ export default function DashboardPage() {
     formData.append("session-id", sessionId);
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/chat", {
+      const res = await fetch("https://mukils.pythonanywhere.com/chat", {
         method: "POST",
         body: formData,
       });
@@ -222,7 +222,7 @@ export default function DashboardPage() {
       const formData = new FormData();
       formData.append("query", location);
 
-      const res = await fetch("http://127.0.0.1:5000/places-search", {
+      const res = await fetch("https://mukils.pythonanywhere.com/places-search", {
         method: "POST",
         body: formData,
       });
@@ -263,7 +263,7 @@ export default function DashboardPage() {
     formData.append("userID", user?.email ?? "");
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/api/upload", {
+      const res = await fetch("https://mukils.pythonanywhere.com/api/upload", {
         method: "POST",
         body: formData,
       });
@@ -291,7 +291,7 @@ export default function DashboardPage() {
     try {
       setIsClearing(true);
 
-      await fetch("http://127.0.0.1:5000/clear_data", {
+      await fetch("https://mukils.pythonanywhere.com/clear_data", {
         method: "POST",
         body: formData,
       });

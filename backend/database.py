@@ -7,7 +7,6 @@ class database():
     def create_user(userID):
         load_dotenv()
         url: str = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
-        print(url)
         key: str = os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY")
         supabase: Client = create_client(url, key)
         response = (
@@ -28,22 +27,22 @@ class database():
             .eq('id', userID)
             .execute()
         )
-        print(response.data)
         return response.data
 
     def get_syllabus(userID):
         data = database.get_user_data(userID)[0]
-        return data['syllabus'];
+        return data['syllabus']
   
 
     def get_goals(userID):
         data = database.get_user_data(userID)[0]
-        return data['goals'];
+        
+        return data['goals']
 
     def get_activities(userID):
         data = database.get_user_data(userID)[0]
         # print(data['activities'].append("hi"))
-        return data['activities'];
+        return data['activities']
  
         
 

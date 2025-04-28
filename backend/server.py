@@ -81,6 +81,19 @@ def create_new_user():
 def clear_data():
     userID = request.form.get("userID")
     database.clear_user_data(userID)
+    return "Cleared", 200
+
+import requests
+
+@app.route('/places-search', methods=['POST'])
+def places_search():
+    location_query = request.form.get('query')
+    api_key = "AIzaSyApA0s2-TaSrRGPEWOKpehLQPy8MvfdM9w"  # your real key
+    google_url = f"https://maps.googleapis.com/maps/api/place/textsearch/json?query={location_query}&key={api_key}"
+
+    response = requests.get(google_url)
+    return response.json()
+
 
 if __name__ == '__main__':
     app.run(debug=True)

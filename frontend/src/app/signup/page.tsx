@@ -26,7 +26,7 @@ export default function SignupPage() {
       });
       console.log(res);
 
-      // router.push("/login");
+      router.push("/login");
       
     }
   };

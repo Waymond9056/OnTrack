@@ -68,8 +68,8 @@ export default function HomePage() {
           {/* Image Section */}
           <div className="flex justify-center">
             <img
-              src="/features-image.png"
-              alt="Features Illustration"
+              src="/home/image2.png"
+              alt="Chatbot Illustration"
               className="w-full max-w-md rounded-xl shadow-lg"
             />
           </div>
@@ -88,8 +88,8 @@ export default function HomePage() {
           {/* Image Section (Left) */}
           <div className="flex justify-center">
             <img
-              src="/features-image-2.png"
-              alt="Another Feature"
+              src="/home/image1.png"
+              alt="Map"
               className="w-full max-w-md rounded-xl shadow-lg"
             />
           </div>
@@ -144,8 +144,8 @@ export default function HomePage() {
           {/* Image Section */}
           <div className="flex justify-center">
             <img
-              src="/features-image.png"
-              alt="Features Illustration"
+              src="/home/image3.png"
+              alt="Syllabus"
               className="w-full max-w-md rounded-xl shadow-lg"
             />
           </div>

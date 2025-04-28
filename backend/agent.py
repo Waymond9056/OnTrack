@@ -14,6 +14,7 @@ class Model():
         self.user_id = user_id
         self.history = []
 
+
         # Pull in data from last sessions
 
         data_paragraph = ""
@@ -25,7 +26,7 @@ class Model():
         if not user_goals == "NULL" and not user_goals == None:
             if not len(user_goals) == 0:
                 for goal in user_goals:
-                    data_paragraph += "goal"
+                    data_paragraph += goal
                     data_paragraph += "\n"
             else:
                 data_paragraph += "The user has no goals\n"
@@ -33,18 +34,21 @@ class Model():
             database.set_goals(user_id, [])
             data_paragraph += "The user is new and has no goals!"
 
-        user_activites = database.get_goals(user_id)
+        user_activites = database.get_activities(user_id)
+        data_paragraph += "The user's past activites are \n"
 
         if not user_activites == "NULL" and not user_activites == None:
             if not len(user_activites) == 0:
-                for goal in user_activites:
-                    data_paragraph += "goal"
+                for activity in user_activites:
+                    data_paragraph += activity
                     data_paragraph += "\n"
             else:
                 data_paragraph += "The user has no activities\n"
         else:
-            database.set_goals(user_id, [])
+            database.set_activities(user_id, [])
             data_paragraph += "The user is new and has no activities!"
+
+        print(data_paragraph)
         
         
         # Specify instructions

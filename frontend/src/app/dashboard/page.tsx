@@ -1,9 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LoginProvider } from "../context/LoginContext";
 import ProtectedRoute from "../../../components/ProtectedRoute";
 import { supabase } from "../../../lib/supabase";
+import { GoogleMap, Marker } from "@react-google-maps/api";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  LineElement,
+  PointElement,
+  LinearScale,
+  CategoryScale,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  LineElement,
+  PointElement,
+  LinearScale,
+  CategoryScale,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function DashboardPage() {
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -12,9 +34,78 @@ export default function DashboardPage() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showMap, setShowMap] = useState(false);
+  const [viewMode, setViewMode] = useState<"upload" | "map" | "gpa">("upload");
+  const [isClearing, setIsClearing] = useState(false);
+  const [clearedMessageVisible, setClearedMessageVisible] = useState(false);
+  const [customResponses, setCustomResponses] = useState<string[]>([]);
+  const [mapMarkers, setMapMarkers] = useState<
+    { lat: number; lng: number; name: string }[]
+  >([]);
 
-  // Fetch session ID on load
+  const mapRef = useRef<google.maps.Map | null>(null);
+
+  const gpaData = {
+    labels: ["Fall 2022", "Spring 2023", "Fall 2023", "Spring 2024"],
+    datasets: [
+      {
+        label: "GPA",
+        data: [3.2, 2.8, 3.6, 4.0],
+        fill: true,
+        backgroundColor: "rgba(147, 197, 253, 0.3)",
+        borderColor: "rgba(99, 102, 241, 1)",
+        borderWidth: 3,
+        tension: 0.4,
+        pointBackgroundColor: "white",
+        pointBorderColor: "rgba(99, 102, 241, 1)",
+        pointBorderWidth: 2,
+        pointRadius: 5,
+      },
+    ],
+  };
+
+  const gpaOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          color: "gray",
+          font: {
+            size: 14,
+          },
+        },
+      },
+      tooltip: {
+        mode: "index" as const,
+        intersect: false,
+      },
+    },
+    elements: {
+      line: {
+        tension: 0.4, // curved lines
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: "gray",
+        },
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        ticks: {
+          color: "gray",
+        },
+        grid: {
+          color: "rgba(200, 200, 200, 0.2)",
+        },
+      },
+    },
+  };
+
   useEffect(() => {
     const fetchSessionId = async () => {
       const {
@@ -44,6 +135,14 @@ export default function DashboardPage() {
     fetchSessionId();
   }, []);
 
+  useEffect(() => {
+    if (mapRef.current && mapMarkers.length > 0) {
+      const bounds = new google.maps.LatLngBounds();
+      mapMarkers.forEach((marker) => bounds.extend(marker));
+      mapRef.current.fitBounds(bounds);
+    }
+  }, [mapMarkers]);
+
   const handleSend = async () => {
     if (!input || !sessionId || isLoading) return;
 
@@ -63,6 +162,18 @@ export default function DashboardPage() {
       const data = await res.json();
       const reply = data.message;
       setMessages((prev) => [...prev, `Bot: ${reply}`]);
+      setCustomResponses(data.custom_responses?.slice(1) || []);
+
+      if (data.locations && data.locations.length > 0) {
+        fetchLocationsCoordinates(data.locations);
+      }
+
+      if (data.flag) {
+        if (data.flag === "SYLLABUS") setViewMode("upload");
+        if (data.flag === "SCHEDULE") setViewMode("map");
+        if (data.flag === "PROGRESS") setViewMode("gpa");
+      }
+
       setInput("");
     } catch (err) {
       console.error(err);
@@ -72,12 +183,78 @@ export default function DashboardPage() {
     }
   };
 
+  const handleSendSuggestion = async (suggestion: string) => {
+    if (!suggestion || !sessionId || isLoading) return;
+
+    setIsLoading(true);
+    setMessages((prev) => [...prev, `You: ${suggestion}`]);
+
+    const formData = new FormData();
+    formData.append("text", suggestion);
+    formData.append("session-id", sessionId);
+
+    try {
+      const res = await fetch("http://127.0.0.1:5000/chat", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      const reply = data.message;
+      setMessages((prev) => [...prev, `Bot: ${reply}`]);
+      setCustomResponses(data.custom_responses?.slice(1) || []);
+
+      if (data.locations && data.locations.length > 0) {
+        fetchLocationsCoordinates(data.locations);
+      }
+
+      setInput("");
+    } catch (err) {
+      console.error(err);
+      setMessages((prev) => [...prev, `Bot: (error)`]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchLocationsCoordinates = async (locations: string[]) => {
+    const promises = locations.map(async (location) => {
+      const formData = new FormData();
+      formData.append("query", location);
+
+      const res = await fetch("http://127.0.0.1:5000/places-search", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.results && data.results.length > 0) {
+        const firstResult = data.results[0];
+        return {
+          lat: firstResult.geometry.location.lat,
+          lng: firstResult.geometry.location.lng,
+          name: location,
+        };
+      }
+      return null;
+    });
+
+    const results = await Promise.all(promises);
+    setMapMarkers(
+      results.filter(
+        (r): r is { lat: number; lng: number; name: string } => r !== null
+      )
+    );
+  };
+
   const handleUpload = async (file: File) => {
     setFileName(file.name);
     setPdfUrl(URL.createObjectURL(file));
 
     const formData = new FormData();
     formData.append("file", file);
+
     const {
       data: { user },
       error,
@@ -95,6 +272,40 @@ export default function DashboardPage() {
     setMessages((prev) => [...prev, "Bot: Uploaded and parsed syllabus."]);
   };
 
+  const handleClearData = async () => {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+    console.log(error);
+
+    if (!user?.email) return;
+
+    const formData = new FormData();
+    formData.append("userID", user.email);
+
+    try {
+      setIsClearing(true);
+
+      await fetch("http://127.0.0.1:5000/clear_data", {
+        method: "POST",
+        body: formData,
+      });
+
+      setTimeout(() => {
+        setMessages([]);
+        setIsClearing(false);
+        setCustomResponses([]);
+        setMapMarkers([]);
+        setClearedMessageVisible(true);
+        setTimeout(() => setClearedMessageVisible(false), 2000);
+      }, 300);
+    } catch (err) {
+      console.error("Failed to clear data:", err);
+      setIsClearing(false);
+    }
+  };
+
   return (
     <LoginProvider>
       <ProtectedRoute>
@@ -102,39 +313,47 @@ export default function DashboardPage() {
           {/* LEFT PANEL */}
           <div className="w-1/2 bg-gray-100 flex flex-col p-6 space-y-4 overflow-y-auto">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">
-                {showMap ? "Google Maps" : "Upload Your Syllabus"}
-              </h2>
-              <button
-                onClick={() => setShowMap(!showMap)}
-                className="text-sm px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600"
-              >
-                {showMap ? "Switch to Upload" : "Switch to Map"}
-              </button>
+              <h2 className="text-2xl font-bold">Select View</h2>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setViewMode("upload")}
+                  className={`text-sm px-3 py-1 rounded ${
+                    viewMode === "upload"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  } hover:bg-blue-500`}
+                >
+                  Upload
+                </button>
+                <button
+                  onClick={() => setViewMode("map")}
+                  className={`text-sm px-3 py-1 rounded ${
+                    viewMode === "map"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  } hover:bg-blue-500`}
+                >
+                  Map
+                </button>
+                <button
+                  onClick={() => setViewMode("gpa")}
+                  className={`text-sm px-3 py-1 rounded ${
+                    viewMode === "gpa"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  } hover:bg-blue-500`}
+                >
+                  Goals
+                </button>
+              </div>
             </div>
 
-            {showMap ? (
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3313.523426031325!2d-84.39834568479647!3d33.77561728068288!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88f50486d70587ab%3A0xf30cc1c9b764fc01!2sGeorgia%20Institute%20of%20Technology!5e0!3m2!1sen!2sus!4v1614971229876!5m2!1sen!2sus"
-                className="w-full border rounded"
-                style={{ minHeight: "500px" }}
-                loading="lazy"
-                allowFullScreen
-              ></iframe>
-            ) : (
+            {viewMode === "upload" && (
               <>
                 <label
                   htmlFor="file-upload"
                   className="inline-flex items-center gap-2 cursor-pointer px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h5v-2H4V5h8v4h4v6h-5v2h5a2 2 0 002-2V9.586a2 2 0 00-.586-1.414l-4.586-4.586A2 2 0 0013.414 3H4z" />
-                  </svg>
                   Upload Syllabus
                 </label>
                 <input
@@ -146,12 +365,9 @@ export default function DashboardPage() {
                   }}
                   className="hidden"
                 />
-
                 {fileName && (
                   <p className="text-sm text-gray-600">Uploaded: {fileName}</p>
                 )}
-
-                {/* Show only PDF previews */}
                 {pdfUrl && fileName?.toLowerCase().endsWith(".pdf") && (
                   <iframe
                     src={pdfUrl}
@@ -159,27 +375,73 @@ export default function DashboardPage() {
                     style={{ minHeight: "500px" }}
                   />
                 )}
-
-                {/* Fallback message for non-PDF */}
-                {fileName && !fileName.toLowerCase().endsWith(".pdf") && (
-                  <p className="text-gray-500 text-sm italic">
-                    Preview only available for PDFs. File uploaded:{" "}
-                    <strong>{fileName}</strong>
-                  </p>
-                )}
               </>
+            )}
+
+            {viewMode === "map" && (
+              <GoogleMap
+                mapContainerStyle={{ width: "100%", height: "500px" }}
+                center={mapMarkers[0] || { lat: 33.7756, lng: -84.3963 }}
+                zoom={14}
+                onLoad={(map) => {
+                  mapRef.current = map;
+                }}
+              >
+                {mapMarkers.map((marker, idx) => (
+                  <Marker
+                    key={idx}
+                    position={{ lat: marker.lat, lng: marker.lng }}
+                    title={marker.name}
+                    animation={google.maps.Animation.DROP}
+                  />
+                ))}
+              </GoogleMap>
+            )}
+
+            {viewMode === "gpa" && (
+              <div className="flex flex-col items-center justify-center h-full p-6 bg-gradient-to-b from-gray-100 to-gray-200 rounded-2xl shadow-inner">
+                <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-10 flex flex-col items-center space-y-8 relative overflow-hidden">
+                  {/* Animated Glow */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-300 via-transparent to-indigo-300 opacity-20 animate-pulse rounded-3xl pointer-events-none" />
+
+                  <div className="text-center z-10">
+                    <h2 className="text-2xl font-extrabold text-gray-800 mb-2">
+                      Goals Visualizer
+                    </h2>
+                  </div>
+
+                  <div className="w-full h-96 relative z-10">
+                    {/* Background gradient behind the chart */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-purple-100 via-transparent to-transparent rounded-2xl opacity-30 pointer-events-none" />
+                    <Line data={gpaData} options={gpaOptions} />
+                  </div>
+                </div>
+              </div>
             )}
           </div>
 
           {/* RIGHT PANEL */}
+          {/* (Chatbot panel stays exactly like before) */}
+
+          {/* RIGHT PANEL */}
           <div className="w-1/2 bg-white border-l flex flex-col">
-            <div className="p-4 border-b bg-white shadow-sm">
+            <div className="p-4 border-b bg-white shadow-sm flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-800">
-                Chat with Your Syllabus
+                Chat With Your Agent
               </h2>
+              <button
+                onClick={handleClearData}
+                className="text-sm px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600"
+              >
+                Clear Data
+              </button>
             </div>
 
-            <div className="flex-1 px-4 py-6 overflow-y-auto space-y-4">
+            <div
+              className={`flex-1 px-4 py-6 overflow-y-auto space-y-4 transition-opacity duration-300 ${
+                isClearing ? "opacity-0" : "opacity-100"
+              }`}
+            >
               {messages.map((msg, i) => {
                 const isUser = msg.startsWith("You:");
                 return (
@@ -195,7 +457,27 @@ export default function DashboardPage() {
                   </div>
                 );
               })}
+
+              {clearedMessageVisible && (
+                <div className="text-center text-sm text-gray-500 italic mt-4">
+                  Chat cleared!
+                </div>
+              )}
             </div>
+
+            {customResponses.length > 0 && (
+              <div className="flex flex-wrap gap-2 p-4 border-t bg-white">
+                {customResponses.map((suggestion, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSendSuggestion(suggestion)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 hover:scale-105 transform transition-all duration-200 text-sm"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
 
             <div className="p-4 border-t bg-white flex items-center">
               <input

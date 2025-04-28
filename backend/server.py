@@ -67,8 +67,10 @@ def upload_pdf():
         for page in doc:
             text += page.get_text()
         activities, goals = SyllabusParser.pull_information(text)
-        database.update_goals(goals)
-        database.update_activities(activities)
+        for goal in goals:
+            database.set_goals(self.user_id, goal)
+        for activity in activities:
+            database.set_activities(self.user_id, activity)
         database.set_syllabus(userID, text)
         ret_text = "PDF successfully uploaded. Goals identified as: \n"
         for goal in goals:
@@ -80,11 +82,12 @@ def upload_pdf():
             ret_text += "\n"
         return ret_text
     
-@app.route('/create_user')
-def create_new_user():
+@app.route('/create_user', methods = ['POST'])
+def create_user():
     print("attempt to create new user...")
     userID = request.form.get("userID")
     database.create_user(userID)
+    return "Account created..."
 
     
 @app.route('/clear_data', methods=['POST'])

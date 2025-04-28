@@ -11,6 +11,7 @@ class Model():
         gpt_key = os.getenv("CHAT_GPT_KEY")
 
         self.client = OpenAI(api_key=gpt_key)
+        self.user_id = user_id
         self.history = []
 
         # Pull in data from last sessions
@@ -134,8 +135,10 @@ class Model():
 
         self.history.append({"role": "assistant", "content": return_text})
         ret_object = self.clean_response(return_text)
-        database.update_goals(ret_object["goals"])
-        database.update_activities(ret_object["activities"])
+        for goal in ret_object["goals"]:
+            database.set_goals(self.user_id, goal)
+        for activity in ret_object["activities"]:
+            database.set_activities(self.user_id, activity)
 
         return ret_object
     

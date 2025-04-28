@@ -1,10 +1,13 @@
 import os
 from supabase import create_client, Client
+from dotenv import load_dotenv
 
 class database():
 
     def create_user(userID):
+        load_dotenv()
         url: str = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
+        print(url)
         key: str = os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY")
         supabase: Client = create_client(url, key)
         response = (
@@ -14,7 +17,9 @@ class database():
         )
 
     def get_user_data(userID):
+        load_dotenv()
         url: str = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
+        
         key: str = os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY")
         supabase: Client = create_client(url, key)
         response = (
@@ -23,6 +28,7 @@ class database():
             .eq('id', userID)
             .execute()
         )
+        print(response.data)
         return response.data
 
     def get_syllabus(userID):
@@ -42,6 +48,7 @@ class database():
         
 
     def set_user_data(userID, column, newValue):
+        load_dotenv()
         url: str = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
         key: str = os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY")
         supabase: Client = create_client(url, key)

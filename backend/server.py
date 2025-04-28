@@ -5,6 +5,7 @@ from agent import Model
 import random
 import fitz
 from database import database
+from syllabus_parser import SyllabusParser
  
 
 app = Flask(__name__)
@@ -65,9 +66,19 @@ def upload_pdf():
         text = ""
         for page in doc:
             text += page.get_text()
-
+        activities, goals = SyllabusParser.pull_information(text)
+        database.update_goals(goals)
+        database.update_activities(activities)
         database.set_syllabus(userID, text)
-        return "PDF successfully uploaded."
+        ret_text = "PDF successfully uploaded. Goals identified as: \n"
+        for goal in goals:
+            ret_text += goal
+            ret_text += "\n"
+        ret_text += "Classtimes found as: \n"
+        for activity in activities:
+            ret_text += activity
+            ret_text += "\n"
+        return ret_text
     
 @app.route('/create_user')
 def create_new_user():

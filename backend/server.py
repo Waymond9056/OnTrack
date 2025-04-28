@@ -66,7 +66,8 @@ def upload_pdf():
         text = ""
         for page in doc:
             text += page.get_text()
-        activities, goals = SyllabusParser.pull_information(text)
+        sp = SyllabusParser()
+        activities, goals = sp.pull_information(text)
         for goal in goals:
             database.set_goals(userID, goal)
         for activity in activities:
@@ -80,6 +81,7 @@ def upload_pdf():
         for activity in activities:
             ret_text += activity
             ret_text += "\n"
+        print(ret_text)
         return ret_text
     
 @app.route('/create_user', methods = ['POST'])

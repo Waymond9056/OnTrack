@@ -21,7 +21,7 @@ class SyllabusParser():
         self.history.append({"role": "developer", "content": self.instruction})
 
     def pull_information(self, text):
-        self.history.append({"role": "user", "content": input})
+        self.history.append({"role": "user", "content": text})
         response = self.client.chat.completions.create(
             model = "gpt-4o",
             messages = self.history,
@@ -38,6 +38,7 @@ class SyllabusParser():
         goals = []
         switched = False
         for line in lines:
+            line = line.strip()
             if (line == "ENDDATES"):
                 switched = True
                 continue

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function HomePage() {
   return (
     <div>
@@ -21,14 +23,25 @@ export default function HomePage() {
               are shared. It also uses location-based information to suggest efficient transportation routes. With 
               its adaptive chatbot, OnTrack offers advice and support tailored to the user’s needs.
             </p>
+
+              {/* Buttons */}
+          <div className="mt-8 flex space-x-4">
+            <Link href="/login" className="text-white bg-blue-600 px-4 py-2 rounded-full">
+             Get Started
+           </Link>
+           <Link href="#features" className="text-blue-600 bg-blue-50 px-4 py-2 rounded-full">
+             Learn More
+           </Link>
           </div>
+            
+        </div>
 
           {/* image on the right */}
           <div className="w-full md:w-1/2 flex justify-center md:justify-end">
             <img
-              src="/home/temp_img.png" // this image is temporary
+              src="/home/cover_img.png"
               alt="Home Image"
-              className="w-full max-w-md rounded-xl shadow-lg"
+              className="w-full max-w-xl rounded-xl shadow-lg"
             />
           </div>
 
@@ -46,18 +59,18 @@ export default function HomePage() {
           {/* Text Section (Left) */}
           <div>
             <h1 className="text-4xl font-bold text-gray-800 mb-4">
-              Amazing Features
+                Smart Chatbot Assistant 
             </h1>
             <p className="text-gray-600 mb-6">
               {
-                "Our product offers a wide range of features designed to improve your workflow, enhance collaboration, and simplify your tasks. Whether you're a solo developer or a large team, you'll love the flexibility and power we provide."
+                "Our intelligent chatbot is designed to provide instant support, streamline your queries, and guide you through tasks with ease. Whether you're uploading a syllabus or seeking quick answers, the chatbot is always ready to assist, keeping your workflow smooth and efficient."
               }
             </p>
             <ul className="list-disc pl-5 text-gray-700 space-y-2">
-              <li>Fast and intuitive interface</li>
-              <li>Seamless team collaboration</li>
-              <li>Customizable to your needs</li>
-              <li>Secure and reliable infrastructure</li>
+              <li>Natural and conversational interface</li>
+              <li>Instant responses tailored to your content</li>
+              <li>Integrates directly with your dashboard</li>
+              <li>Reduces time spent searching or waiting</li>
             </ul>
           </div>
 
@@ -77,7 +90,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="flex justify-center">
             <img
-              src="/features-image-2.png"
+              src="/home/maps_img.png"
               alt="Another Feature"
               className="w-full max-w-md rounded-xl shadow-lg"
             />
@@ -86,17 +99,17 @@ export default function HomePage() {
           {/* Text Section (Right) */}
           <div>
             <h2 className="text-4xl font-bold text-gray-800 mb-4">
-              Smart Integrations
+              Interactive Map Integration
             </h2>
-            <p className="text-gray-600 mb-6">
-              Easily connect with your favorite tools and services. Our platform
-              supports seamless integrations that enhance productivity and
-              minimize context switching.
+            <p className="text-gray-600 mb-6"> 
+              {
+                "Navigate your data visually with our interactive map icon feature. Whether you're exploring location-based inputs or toggling views, the built-in map tools make orientation effortless and intuitive—perfect for keeping context without ever breaking focus."
+              }
             </p>
             <ul className="list-disc pl-5 text-gray-700 space-y-2">
-              <li>Integrate with Slack, Notion, GitHub, and more</li>
-              <li>Automate repetitive tasks</li>
-              <li>Build custom workflows</li>
+              <li>Click-to-toggle map icon</li>
+              <li>Instantly view location-based elements</li>
+              <li>Responsive design across devices</li>
             </ul>
           </div>
         </div>

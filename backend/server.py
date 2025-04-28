@@ -68,9 +68,9 @@ def upload_pdf():
             text += page.get_text()
         activities, goals = SyllabusParser.pull_information(text)
         for goal in goals:
-            database.set_goals(self.user_id, goal)
+            database.set_goals(userID, goal)
         for activity in activities:
-            database.set_activities(self.user_id, activity)
+            database.set_activities(userID, activity)
         database.set_syllabus(userID, text)
         ret_text = "PDF successfully uploaded. Goals identified as: \n"
         for goal in goals:

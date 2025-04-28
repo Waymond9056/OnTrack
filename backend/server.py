@@ -25,14 +25,12 @@ def hello_world():
 @app.route("/get-session-id", methods=["POST"])
 def return_session_id():
     global next_pos
-    user_id = request.form.get("userID")  # <-- get it from the form data
-    print("Received user ID:", user_id)    # <-- just to verify for now
-
+    user_id = request.form.get("userID")
     session_id_dict[session_id_storage[next_pos]] = None
     new_id = random.randint(0, 2147483647)
     session_id_dict[new_id] = next_pos
     session_id_storage[next_pos] = new_id
-    models[next_pos] = Model()
+    models[next_pos] = Model(user_id)
     next_pos = (next_pos + 1) % server_capacity
 
     return str(new_id)
@@ -73,6 +71,7 @@ def upload_pdf():
     
 @app.route('/create_user')
 def create_new_user():
+    print("attempt to create new user...")
     userID = request.form.get("userID")
     database.create_user(userID)
 

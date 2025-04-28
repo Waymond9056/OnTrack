@@ -12,9 +12,9 @@ export default function HomePage() {
   return (
     <div>
 
-      {/* Hero */}
+    {/* Hero */}
 
-    <section className="bg-white py-50 px-4">
+    <section id = "home" className="bg-white py-50 px-4">
       <motion.div
         variants={fadeAnimation}
         initial="initial"
@@ -39,12 +39,12 @@ export default function HomePage() {
               its adaptive chatbot, OnTrack offers advice and support tailored to the user’s needs.
             </p>
 
-              {/* Buttons */}
+          {/* Buttons */}
           <div className="mt-8 flex space-x-4">
-            <Link href="/login" className="text-white bg-blue-600 px-4 py-2 rounded-full">
+            <Link href="/login" className="text-white bg-blue-600 px-4 py-2 rounded-full hover:bg-blue-700">
              Get Started
            </Link>
-           <Link href="#features" className="text-blue-600 bg-blue-50 px-4 py-2 rounded-full">
+           <Link href="#features" className="text-blue-600 bg-blue-50 px-4 py-2 rounded-full hover:bg-blue-200">
              Learn More
            </Link>
           </div>
@@ -66,10 +66,16 @@ export default function HomePage() {
     </section>
 
 
-
       {/* Features Section*/}
 
       <section id = "features" className="px-6 pt-80 pb-20 bg-white">
+
+        <motion.div
+          variants={fadeAnimation}
+          initial="initial"
+          animate="animate"
+          transition={{ duration: 0.8 }}
+        >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           
           {/* Text Section (Left) */}
@@ -94,20 +100,27 @@ export default function HomePage() {
           <div className="flex justify-center">
             <img
               src="/features-image.png"
-              alt="Features Illustration"
+              alt="Chatbot Illustration"
               className="w-full max-w-md rounded-xl shadow-lg"
             />
           </div>
         </div>
+        </motion.div>
       </section>
 
       {/* "Another Feature" Image */}
       <section className="px-6 py-20 bg-gray-50">
+        <motion.div
+            variants={fadeAnimation}
+            initial="initial"
+            animate="animate"
+            transition={{ duration: 0.8 }}
+          >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="flex justify-center">
             <img
               src="/home/maps_img.png"
-              alt="Another Feature"
+              alt="Maps Integration"
               className="w-full max-w-md rounded-xl shadow-lg"
             />
           </div>
@@ -129,6 +142,7 @@ export default function HomePage() {
             </ul>
           </div>
         </div>
+        </motion.div>
       </section>
     </div>
   );

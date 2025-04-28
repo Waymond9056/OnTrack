@@ -29,11 +29,11 @@ export default function Header() {
       >
 
       {/* Left side: logo + nav */}
-      <div className="flex space-x-4">
-        <Link href="/" className="text-blue-600 font-semibold">
+      <div className="flex items-center space-x-4">
+        <Link href="/#home" className="text-blue-600 font-bold text-xl hover:text-blue-700">
           OnTrack
         </Link>
-        <Link href="#features" className="text-gray-700 hover:text-blue-600">
+        <Link href="/#features" className="text-gray-700 hover:text-blue-600">
           Features
         </Link>
       </div>
@@ -43,7 +43,7 @@ export default function Header() {
           {isLoggedIn && (
             <Link
               href="/dashboard"
-              className="text-gray-700 bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+              className="text-gray-700 bg-gray-200 px-4 py-2 rounded-full hover:bg-gray-300"
             >
               Dashboard
             </Link>

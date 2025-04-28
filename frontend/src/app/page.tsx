@@ -1,11 +1,26 @@
+'use client';
+
 import Link from "next/link";
+import { motion } from "framer-motion";
+
+const fadeAnimation = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+};
 
 export default function HomePage() {
   return (
     <div>
 
       {/* Hero */}
-      <section className="bg-white py-60 px-4">
+
+    <section className="bg-white py-50 px-4">
+      <motion.div
+        variants={fadeAnimation}
+        initial="initial"
+        animate="animate"
+        transition={{ duration: 0.8 }}
+      >
         <div className="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center md:space-x-12">
     
           {/* text stuff */}
@@ -46,8 +61,9 @@ export default function HomePage() {
           </div>
 
         </div>
-      </section>
 
+      </motion.div>
+    </section>
 
 
 

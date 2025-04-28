@@ -108,6 +108,8 @@ class Model():
         MESSAGE
         [Response to user here]
 
+        If this is the user's first time (they do not have any previous data), give some instructions on how to use the app.
+
         Concatenate these section together to return as your message.
 
         Example message:

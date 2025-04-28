@@ -92,9 +92,6 @@ def clear_data():
     userID = request.form.get("userID")
     database.clear_user_data(userID)
 
-@app.route('/test')
-def test():
-    database.set_activities('thisuser', 'hi')
 
 if __name__ == '__main__':
     app.run(debug=True)

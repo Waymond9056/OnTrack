@@ -91,6 +91,11 @@ class Model():
         Student Center
         Library
 
+        Semester Plans (Optional) -
+        If the user wants suggestions about a plan for their semester, give useful suggestions to acheive their goals. Put a PROGRESS tag.
+        Format Example:
+        PROGRESS
+
         Message content section:
 
         Begin this section with a MESSAGE tag. Put the message body after this tag.
@@ -161,6 +166,9 @@ class Model():
                 continue
             if line == "GOAL":
                 status = "GOAL"
+                continue
+            if line == "PROGRESS":
+                ret["flag"] = "PROGRESS"
                 continue
             if line == "SYLLABI":
                 ret["flag"] = "SYLLABUS"

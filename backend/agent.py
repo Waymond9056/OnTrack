@@ -96,7 +96,7 @@ class Model():
         ret_object = self.clean_response(return_text)
         print(ret_object)
 
-        return ret_object["message"]
+        return ret_object
     
     def clean_response(self, input_text):
         print(input_text)

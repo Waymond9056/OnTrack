@@ -15,11 +15,33 @@ export default function DashboardPage() {
   const [showMap, setShowMap] = useState(false);
 
   // Fetch session ID on load
-  useEffect(() => { 
-    fetch("http://127.0.0.1:5000/get-session-id")
-      .then((res) => res.text())
-      .then(setSessionId)
-      .catch(console.error);
+  useEffect(() => {
+    const fetchSessionId = async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+      console.log(error);
+
+      if (!user?.email) return;
+
+      const formData = new FormData();
+      formData.append("userID", user.email);
+
+      try {
+        const res = await fetch("http://127.0.0.1:5000/get-session-id", {
+          method: "POST",
+          body: formData,
+        });
+
+        const id = await res.text();
+        setSessionId(id);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchSessionId();
   }, []);
 
   const handleSend = async () => {
@@ -37,7 +59,9 @@ export default function DashboardPage() {
         method: "POST",
         body: formData,
       });
-      const reply = await res.text();
+
+      const data = await res.json();
+      const reply = data.message;
       setMessages((prev) => [...prev, `Bot: ${reply}`]);
       setInput("");
     } catch (err) {
@@ -54,10 +78,12 @@ export default function DashboardPage() {
 
     const formData = new FormData();
     formData.append("file", file);
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
     console.log(error);
-    formData.append("userID", user?.email)
-    
+    formData.append("userID", user?.email ?? "");
 
     const res = await fetch("http://127.0.0.1:5000/api/upload", {
       method: "POST",

@@ -2,9 +2,10 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from datetime import date
+from database import database
 
 class Model():
-    def __init__(self):
+    def __init__(self, user_id):
 
         load_dotenv()
         gpt_key = os.getenv("CHAT_GPT_KEY")
@@ -12,6 +13,39 @@ class Model():
         self.client = OpenAI(api_key=gpt_key)
         self.history = []
 
+        # Pull in data from last sessions
+
+        data_paragraph = ""
+        data_paragraph += "Here is the user's goals and activities from the last session: \n"
+        data_paragraph += "The user's past goals are \n"
+
+        user_goals = database.get_goals(user_id)
+
+        if not user_goals == "NULL" and not user_goals == None:
+            if not len(user_goals) == 0:
+                for goal in user_goals:
+                    data_paragraph += "goal"
+                    data_paragraph += "\n"
+            else:
+                data_paragraph += "The user has no goals\n"
+        else:
+            database.set_goals(user_id, [])
+            data_paragraph += "The user is new and has no goals!"
+
+        user_activites = database.get_goals(user_id)
+
+        if not user_activites == "NULL" and not user_activites == None:
+            if not len(user_activites) == 0:
+                for goal in user_activites:
+                    data_paragraph += "goal"
+                    data_paragraph += "\n"
+            else:
+                data_paragraph += "The user has no activities\n"
+        else:
+            database.set_goals(user_id, [])
+            data_paragraph += "The user is new and has no activities!"
+        
+        
         # Specify instructions
 
         todays_date = date.today()
@@ -80,6 +114,7 @@ class Model():
         """
 
         self.history.append({"role": "developer", "content": self.instruction})
+        self.history.append({"role": "developer", "content": data_paragraph})
 
     def get_response(self, input):
 
@@ -94,7 +129,8 @@ class Model():
 
         self.history.append({"role": "assistant", "content": return_text})
         ret_object = self.clean_response(return_text)
-        print(ret_object)
+        database.update_goals(ret_object["goals"])
+        database.update_activities(ret_object["activities"])
 
         return ret_object
     
@@ -112,6 +148,7 @@ class Model():
             line = lines[i]
             if line == "CHAT":
                 status = "CHAT"
+                continue
             if line == "":
                 continue
             if line == "MESSAGE":

@@ -162,7 +162,7 @@ export default function DashboardPage() {
       const data = await res.json();
       const reply = data.message;
       setMessages((prev) => [...prev, `Bot: ${reply}`]);
-      setCustomResponses(data.custom_responses?.slice(1) || []);
+      setCustomResponses(data.custom_responses?.slice(0, 3) || []);
 
       if (data.locations && data.locations.length > 0) {
         fetchLocationsCoordinates(data.locations);
@@ -202,7 +202,7 @@ export default function DashboardPage() {
       const data = await res.json();
       const reply = data.message;
       setMessages((prev) => [...prev, `Bot: ${reply}`]);
-      setCustomResponses(data.custom_responses?.slice(1) || []);
+      setCustomResponses(data.custom_responses?.slice(0, 3) || []);
 
       if (data.locations && data.locations.length > 0) {
         fetchLocationsCoordinates(data.locations);
@@ -262,14 +262,18 @@ export default function DashboardPage() {
     console.log(error);
     formData.append("userID", user?.email ?? "");
 
-    const res = await fetch("http://127.0.0.1:5000/api/upload", {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const res = await fetch("http://127.0.0.1:5000/api/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-    const data = await res.json();
-    console.log("Parsed syllabus:", data);
-    setMessages((prev) => [...prev, "Bot: Uploaded and parsed syllabus."]);
+      const message = await res.text(); // <-- get plain text
+      setMessages((prev) => [...prev, `Bot: ${message}`]); // <-- display it in chat
+    } catch (err) {
+      console.error("Upload failed:", err);
+      setMessages((prev) => [...prev, "Bot: Failed to upload syllabus."]);
+    }
   };
 
   const handleClearData = async () => {

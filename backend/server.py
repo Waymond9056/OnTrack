@@ -5,7 +5,7 @@ from agent import Model
 import random
 import fitz
 from database import database
-from database import create_user
+ 
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -22,16 +22,21 @@ session_id_storage = [-1] * server_capacity
 def hello_world():
     return "<p>Hello, World!</p>"
 
-@app.route("/get-session-id")
+@app.route("/get-session-id", methods=["POST"])
 def return_session_id():
     global next_pos
+    user_id = request.form.get("userID")  # <-- get it from the form data
+    print("Received user ID:", user_id)    # <-- just to verify for now
+
     session_id_dict[session_id_storage[next_pos]] = None
     new_id = random.randint(0, 2147483647)
     session_id_dict[new_id] = next_pos
     session_id_storage[next_pos] = new_id
     models[next_pos] = Model()
     next_pos = (next_pos + 1) % server_capacity
+
     return str(new_id)
+
 
 # Setting up chat returns
 @app.route("/chat", methods=["POST"])
@@ -68,8 +73,8 @@ def upload_pdf():
     
 @app.route('/create_user')
 def create_new_user():
-    userID = request.form.get("userID");
-    create_user(userID);
+    userID = request.form.get("userID")
+    database.create_user(userID)
 
     
 @app.route('/clear_data', methods=['POST'])

@@ -35,7 +35,7 @@ export default function SignupPage() {
     <section className="px-6 py-20 bg-white text-center">
       <h1 className="text-4xl font-bold text-gray-800 mb-6">Sign Up</h1>
       <p className="text-gray-600 mb-4">Create your account to get started.</p>
-      <div className="text-gray-600 max-w-md mx-auto bg-gray-100 p-6 rounded-lg shadow">
+      <div className="text-black max-w-md mx-auto bg-gray-100 p-6 rounded-lg shadow">
         <input
           type="email"
           placeholder="Email"

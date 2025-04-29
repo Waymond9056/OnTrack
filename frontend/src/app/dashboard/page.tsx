@@ -485,7 +485,7 @@ export default function DashboardPage() {
 
             <div className="p-4 border-t bg-white flex items-center">
               <input
-                className="flex-1 p-2 border rounded-full mr-2 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-black flex-1 p-2 border rounded-full mr-2 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}

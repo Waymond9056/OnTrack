@@ -282,33 +282,38 @@ export default function DashboardPage() {
       error,
     } = await supabase.auth.getUser();
     console.log(error);
-
+  
     if (!user?.email) return;
-
+  
     const formData = new FormData();
     formData.append("userID", user.email);
-
+  
     try {
       setIsClearing(true);
-
+  
       await fetch("https://mukils.pythonanywhere.com/clear_data", {
         method: "POST",
         body: formData,
       });
-
+  
       setTimeout(() => {
         setMessages([]);
         setIsClearing(false);
         setCustomResponses([]);
         setMapMarkers([]);
         setClearedMessageVisible(true);
-        setTimeout(() => setClearedMessageVisible(false), 2000);
+  
+        setTimeout(() => {
+          setClearedMessageVisible(false);
+          window.location.reload();
+        }, 2000);
       }, 300);
     } catch (err) {
       console.error("Failed to clear data:", err);
       setIsClearing(false);
     }
   };
+  
 
   return (
     <LoginProvider>
